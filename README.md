@@ -6,7 +6,7 @@ Store and manage your API keys securely.
 - Backend: Express (Node.js)
 - Frontend: React (Next.js)
 - Database: Supabase (PostgreSQL via psql/CLI)
-- Auth: Firebase Authentication (frontend)
+- Auth: Firebase Authentication 
 
 ### Features
 - Create, view, and delete stored API keys
