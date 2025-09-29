@@ -1,0 +1,102 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API Key Vault",
+    "version": "1.0.0"
+  },
+  "servers": [
+    { "url": "http://localhost:5000" }
+  ],
+  "paths": {
+    "/api/keys": {
+      "post": {
+        "summary": "Create API key",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiKeyCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ApiKeyResponse"}}}
+          },
+          "500": {"description": "Server error"}
+        }
+      }
+    },
+    "/api/keys/{id}": {
+      "delete": {
+        "summary": "Delete API key",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Deleted" },
+          "404": { "description": "Not found" },
+          "500": { "description": "Server error" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApiKey": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string", "format": "uuid"},
+          "keyName": {"type": "string"},
+          "service": {"type": "string"},
+          "apiKey": {"type": "string"},
+          "rateLimit": {"type": "integer", "nullable": true},
+          "expiresAt": {"type": "string", "format": "date-time", "nullable": true},
+          "ipWhitelist": {"type": "array", "items": {"type": "string"}},
+          "createdAt": {"type": "string", "format": "date-time"},
+          "updatedAt": {"type": "string", "format": "date-time"}
+        }
+      },
+      "ApiKeyCreate": {
+        "type": "object",
+        "required": ["keyName", "service", "apiKey"],
+        "properties": {
+          "keyName": {"type": "string"},
+          "service": {"type": "string"},
+          "apiKey": {"type": "string"},
+          "rateLimit": {"type": "integer", "nullable": true},
+          "expiresAt": {"type": "string", "format": "date-time", "nullable": true},
+          "ipWhitelist": {"type": "array", "items": {"type": "string"}}
+        }
+      },
+      "ApiKeyUpdate": {
+        "type": "object",
+        "properties": {
+          "keyName": {"type": "string"},
+          "service": {"type": "string"},
+          "apiKey": {"type": "string"},
+          "rateLimit": {"type": "integer", "nullable": true},
+          "expiresAt": {"type": "string", "format": "date-time", "nullable": true},
+          "ipWhitelist": {"type": "array", "items": {"type": "string"}}
+        }
+      },
+      "ApiKeyResponse": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean"},
+          "data": {"$ref": "#/components/schemas/ApiKey"}
+        }
+      }
+    }
+  }
+}
+
+
