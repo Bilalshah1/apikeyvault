@@ -7,47 +7,29 @@ Store and manage your API keys securely.
 - Backend: Express (Node.js)
 - Frontend: React (Next.js)
 - Database: Supabase (PostgreSQL via psql/CLI)
-<<<<<<< HEAD
+
 - Auth: Firebase Authentication (frontend)
-=======
-- Auth: Firebase Authentication 
->>>>>>> 2a60340edf226bfb9679e6f440dbf4ff86879054
+
 
 ### Features
 - Create, view, and delete stored API keys
 - Secure auth flow and protected routes
-<<<<<<< HEAD
-=======
 - Bulk testing of all api keys
->>>>>>> 2a60340edf226bfb9679e6f440dbf4ff86879054
 
 ### Development
 bash
 # backend
-<<<<<<< HEAD
 cd backend && npm install && npm run dev
 
 # frontend
-cd ../frontend && npm install && npm run dev
+cd frontend && npm install && npm run dev
 
 
 ### Deployment
 - Frontend: Firebase Hosting (static export)
-- Backend: Node/Express (deploy as you prefer)
-
+- Backend: Render
 ### Live
-- https://YOUR-LIVE-LINK-HERE
-=======
-cd backend && npm install && npm start
-
-# frontend
-cd frontend && npm install && npm run dev
-```
-
-### Deployment
-- Frontend: Firebase Hosting 
-- Backend: Hosted on Render
-
-### Live
+- https://apikeyvault-b1ac8.web.app
 - [Live Link](https://apikeyvault-b1ac8.web.app/)
 >>>>>>> 2a60340edf226bfb9679e6f440dbf4ff86879054
+
