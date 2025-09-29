@@ -1,20 +1,6 @@
-const admin = require('firebase-admin');
+const jwt = require('jsonwebtoken');
 
-// Initialize once using env var for service account JSON or application default creds
-if (!admin.apps.length) {
-  try {
-    if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
-      const credentials = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
-      admin.initializeApp({ credential: admin.credential.cert(credentials) });
-    } else {
-      admin.initializeApp();
-    }
-  } catch (err) {
-    console.error('Firebase admin init failed:', err);
-  }
-}
-
-module.exports = async function authMiddleware(req, res, next) {
+module.exports = function authMiddleware(req, res, next) {
   try {
     const authHeader = req.headers.authorization || '';
     const token = authHeader.startsWith('Bearer ')
@@ -25,8 +11,14 @@ module.exports = async function authMiddleware(req, res, next) {
       return res.status(401).json({ success: false, error: 'Missing auth token' });
     }
 
-    const decoded = await admin.auth().verifyIdToken(token);
-    req.user = { uid: decoded.uid };
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      return res.status(500).json({ success: false, error: 'Server misconfigured: missing JWT_SECRET' });
+    }
+
+    const decoded = jwt.verify(token, secret);
+    // Keep compatibility with req.user.uid used in routes
+    req.user = { uid: decoded.sub || decoded.uid || decoded.id };
     return next();
   } catch (err) {
     console.error('Auth error:', err);

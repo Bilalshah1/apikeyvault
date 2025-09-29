@@ -24,10 +24,19 @@ export default function Dashboard() {
     }
   }, [currentUser, router]);
 
+  const getAuthHeaders = async (extra = {}) => {
+    const token = currentUser ? await currentUser.getIdToken() : null;
+    return {
+      ...(extra || {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+  };
+
   const fetchKeys = async () => {
     try {
       setLoading(true);
-      const response = await fetch('https://apikeyvault.onrender.com/api/keys');
+      const headers = await getAuthHeaders();
+      const response = await fetch('https://apikeyvault.onrender.com/api/keys', { headers });
       const result = await response.json();
       if (result.success) {
         setKeys(result.data);
@@ -70,9 +79,10 @@ export default function Dashboard() {
   const handleBulkHealthTest = async () => {
     try {
       setIsHealthTesting(true);
+      const headers = await getAuthHeaders({ 'Content-Type': 'application/json' });
       const response = await fetch('https://apikeyvault.onrender.com/api/health/bulk-test', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
+        headers
       });
 
       const result = await response.json();
@@ -95,7 +105,8 @@ export default function Dashboard() {
     const confirmDelete = window.confirm('Delete this API key? This cannot be undone.');
     if (!confirmDelete) return;
     try {
-      const response = await fetch(`https://apikeyvault.onrender.com/api/keys/${id}`, { method: 'DELETE' });
+      const headers = await getAuthHeaders();
+      const response = await fetch(`https://apikeyvault.onrender.com/api/keys/${id}`, { method: 'DELETE', headers });
       if (response.ok) {
         // Optimistically update list
         setKeys(prev => prev.filter(k => k.id !== id));
@@ -112,9 +123,10 @@ const handleTestKey = async (id) => {
   try {
     setTestingKeyId(id);
 
+    const headers = await getAuthHeaders({ "Content-Type": "application/json" });
     const response = await fetch(`https://apikeyvault.onrender.com/api/health/test/${id}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" }
+      headers
     });
     console.log("Response:", response);
     const data = await response.json();
@@ -168,9 +180,10 @@ const handleTestKey = async (id) => {
         ipWhitelist: fd.get('ipWhitelist') ? String(fd.get('ipWhitelist')).split(',').map(s => s.trim()).filter(Boolean) : [],
       };
 
+      const headers = await getAuthHeaders({ 'Content-Type': 'application/json' });
       const response = await fetch('https://apikeyvault.onrender.com/api/keys', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify(payload),
       });
 

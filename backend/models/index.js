@@ -26,8 +26,10 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
 })();
 
 const ApiKey = require("./apiKey")(sequelize);
+const User = require("./user")(sequelize);
 
 module.exports = {
   sequelize,
   ApiKey,
+  User,
 };
