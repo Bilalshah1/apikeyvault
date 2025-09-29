@@ -27,7 +27,7 @@ export default function Dashboard() {
   const fetchKeys = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5000/api/keys');
+      const response = await fetch('https://apikeyvault.onrender.com/api/keys');
       const result = await response.json();
       if (result.success) {
         setKeys(result.data);
@@ -70,7 +70,7 @@ export default function Dashboard() {
   const handleBulkHealthTest = async () => {
     try {
       setIsHealthTesting(true);
-      const response = await fetch('http://localhost:5000/api/health/bulk-test', {
+      const response = await fetch('https://apikeyvault.onrender.com/api/health/bulk-test', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -95,7 +95,7 @@ export default function Dashboard() {
     const confirmDelete = window.confirm('Delete this API key? This cannot be undone.');
     if (!confirmDelete) return;
     try {
-      const response = await fetch(`http://localhost:5000/api/keys/${id}`, { method: 'DELETE' });
+      const response = await fetch(`https://apikeyvault.onrender.com/api/keys/${id}`, { method: 'DELETE' });
       if (response.ok) {
         // Optimistically update list
         setKeys(prev => prev.filter(k => k.id !== id));
@@ -112,7 +112,7 @@ const handleTestKey = async (id) => {
   try {
     setTestingKeyId(id);
 
-    const response = await fetch(`http://localhost:5000/api/health/test/${id}`, {
+    const response = await fetch(`https://apikeyvault.onrender.com/api/health/test/${id}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" }
     });
@@ -168,7 +168,7 @@ const handleTestKey = async (id) => {
         ipWhitelist: fd.get('ipWhitelist') ? String(fd.get('ipWhitelist')).split(',').map(s => s.trim()).filter(Boolean) : [],
       };
 
-      const response = await fetch('http://localhost:5000/api/keys', {
+      const response = await fetch('https://apikeyvault.onrender.com/api/keys', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

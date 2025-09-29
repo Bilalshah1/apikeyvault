@@ -1,3 +1,49 @@
+## API Key Vault – Frontend
+
+A Next.js frontend for API Key Vault with Firebase Authentication and Firebase Hosting deployment.
+
+### Live Site
+- Firebase Hosting: [https://YOUR-PROJECT.web.app](https://YOUR-PROJECT.web.app)
+
+### Tech Stack
+- Next.js (App Router)
+- Firebase Authentication
+- Tailwind CSS
+- Deployed on Firebase Hosting (static export)
+
+### Prerequisites
+- Node.js 18+
+- Firebase project and CLI: `npm install -g firebase-tools` and `firebase login`
+
+### Local Setup
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### Configure Firebase Web SDK
+Update `src/lib/firebase.js` with your Firebase config (see `FIREBASE_SETUP.md`).
+
+### Build (Static Export)
+The project is configured for static export (`next.config.mjs` → `output: 'export'`).
+```bash
+cd frontend
+npm run build   # generates the `out/` directory
+```
+
+### Deploy to Firebase Hosting
+Make sure `firebase.json` points `public` to `out`.
+```bash
+cd frontend
+firebase init hosting   # pick your project, set public to "out", single-page app: No
+firebase deploy --only hosting
+```
+
+### Environment & Notes
+- No server-side rendering; all pages are statically exported.
+- If you later need SSR or API routes, use Firebase’s Next.js framework integration instead of `output: 'export'`.
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
