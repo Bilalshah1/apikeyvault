@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>APIKeyVault</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div id="app">
+      <!-- Locked / Setup Screen -->
+      <section id="lock-screen" class="view">
+        <header class="header">
+          <div class="title-block">
+            <span class="logo-circle">AKV</span>
+            <div>
+              <h1>APIKeyVault</h1>
+              <p class="subtitle">Secure API key storage, offline.</p>
+            </div>
+          </div>
+        </header>
+
+        <main class="content">
+          <div id="setup-info" class="info-banner hidden">
+            <strong>First-time setup</strong>
+            <p>
+              Create a master password. It will be used to derive your
+              encryption key and is never stored.
+            </p>
+          </div>
+
+          <form id="unlock-form" autocomplete="off">
+            <label class="field">
+              <span id="master-label">Master password</span>
+              <div class="password-input">
+                <input
+                  id="master-password-input"
+                  type="password"
+                  name="masterPassword"
+                  required
+                  minlength="8"
+                />
+              </div>
+            </label>
+
+            <p id="unlock-hint" class="hint">
+              Your master password is never stored. If you forget it, you lose
+              access to your vault.
+            </p>
+
+            <button id="unlock-button" type="submit" class="btn primary">
+              Unlock vault
+            </button>
+
+            <p id="unlock-error" class="error-text hidden"></p>
+          </form>
+        </main>
+      </section>
+
+      <!-- Vault Screen -->
+      <section id="vault-screen" class="view hidden">
+        <header class="header header-row">
+          <div class="title-block small">
+            <span class="logo-circle small">AKV</span>
+            <div>
+              <h2>API Keys</h2>
+              <p class="subtitle" id="vault-status-text">Unlocked</p>
+            </div>
+          </div>
+
+          <div class="header-actions">
+            <button id="bulk-test-button" class="btn secondary small" title="Test all API keys">
+              Test All
+            </button>
+            <button id="lock-button" class="icon-btn" title="Lock vault">
+              🔒
+            </button>
+          </div>
+        </header>
+
+        <main class="content vault-layout">
+          <section class="vault-list">
+            <div class="vault-list-header">
+              <input
+                id="search-input"
+                type="text"
+                placeholder="Search by name"
+                autocomplete="off"
+              />
+              <button id="add-key-button" class="btn small">Add</button>
+            </div>
+
+            <div id="empty-state" class="empty-state hidden">
+              <p>No API keys yet.</p>
+              <p class="hint">
+                Add your first API key using the <strong>Add</strong> button.
+              </p>
+            </div>
+
+            <ul id="key-list" class="key-list"></ul>
+          </section>
+
+          <section class="vault-detail">
+            <form id="key-form" autocomplete="off">
+              <input type="hidden" id="key-id" />
+
+              <label class="field">
+                <span>Provider Name</span>
+                <input
+                  id="key-name"
+                  type="text"
+                  name="name"
+                  placeholder="e.g. OpenAI, Gemini, Grok"
+                  required
+                />
+                <p class="hint small">
+                  Use a recognizable name (e.g. "OpenAI", "Gemini", "Grok", "Anthropic", "HuggingFace")
+                </p>
+              </label>
+
+              <label class="field">
+                <span>API Key</span>
+                <div class="password-input">
+                  <input
+                    id="key-value"
+                    type="password"
+                    name="apiKey"
+                    placeholder="sk-..."
+                    autocomplete="new-password"
+                    required
+                  />
+                  <button
+                    id="toggle-visibility-button"
+                    class="btn secondary small"
+                    type="button"
+                    title="Toggle visibility"
+                  >
+                    👁️
+                  </button>
+                </div>
+                <p class="hint small">
+                  API keys are encrypted before storage. Never stored in plaintext.
+                </p>
+              </label>
+
+              <div class="form-row spaced">
+                <button id="save-key-button" type="submit" class="btn primary">
+                  Save
+                </button>
+                <button
+                  id="test-key-button"
+                  type="button"
+                  class="btn secondary"
+                  disabled
+                >
+                  Health Check
+                </button>
+                <button
+                  id="delete-key-button"
+                  type="button"
+                  class="btn danger ghost"
+                  disabled
+                >
+                  Delete
+                </button>
+              </div>
+
+              <div id="health-result" class="health-result hidden">
+                <div class="health-status">
+                  <span class="health-indicator"></span>
+                  <span class="health-message"></span>
+                </div>
+                <p class="health-details"></p>
+              </div>
+
+              <p id="key-error" class="error-text hidden"></p>
+              <p id="key-success" class="success-text hidden"></p>
+            </form>
+          </section>
+        </main>
+      </section>
+
+      <div id="toast" class="toast hidden"></div>
+    </div>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
