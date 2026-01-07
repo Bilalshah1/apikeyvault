@@ -1,4 +1,4 @@
-# APIKeyVault
+# apikeyvault
 
 A secure, offline-first browser extension for managing API keys. All data is encrypted and stored locally in your browser—no cloud, no backend, no external dependencies.
 
