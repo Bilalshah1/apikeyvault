@@ -6,180 +6,254 @@
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
+    <!-- Icon sprite: referenced with <use href="#i-name"> throughout. -->
+    <svg class="sprite" aria-hidden="true">
+      <symbol id="i-shield" viewBox="0 0 24 24">
+        <path d="M12 2.5 4.5 5.8v5.4c0 4.6 3.2 8.9 7.5 10.3 4.3-1.4 7.5-5.7 7.5-10.3V5.8L12 2.5Z" />
+        <path d="M12 10.2a1.9 1.9 0 1 0-1.1 3.4v2.6h2.2v-2.6a1.9 1.9 0 0 0-1.1-3.4Z" fill="currentColor" stroke="none" />
+      </symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24">
+        <path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12Z" />
+        <circle cx="12" cy="12" r="3.1" />
+      </symbol>
+      <symbol id="i-eye-off" viewBox="0 0 24 24">
+        <path d="M9.6 6.2A8.9 8.9 0 0 1 12 5.8c6 0 9.5 6.2 9.5 6.2a17 17 0 0 1-3.2 4M6.3 8A16.7 16.7 0 0 0 2.5 12S6 18.2 12 18.2c1.4 0 2.6-.3 3.7-.8" />
+        <path d="m4 4 16 16" />
+      </symbol>
+      <symbol id="i-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="6.4" />
+        <path d="m16 16 4.2 4.2" />
+      </symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" /></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5.5v13M5.5 12h13" /></symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24">
+        <rect x="4.8" y="10.5" width="14.4" height="9.7" rx="2.2" />
+        <path d="M8.4 10.5V7.9a3.6 3.6 0 1 1 7.2 0v2.6" />
+      </symbol>
+      <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13.2 2.8 5 13.4h5.4l-.6 7.8L18 10.6h-5.4l.6-7.8Z" /></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24">
+        <path d="M4.8 6.8h14.4M9.6 6.8V5.2a1.4 1.4 0 0 1 1.4-1.4h2a1.4 1.4 0 0 1 1.4 1.4v1.6" />
+        <path d="M6.6 6.8 7.5 19a1.6 1.6 0 0 0 1.6 1.5h5.8a1.6 1.6 0 0 0 1.6-1.5l.9-12.2" />
+      </symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24">
+        <rect x="9" y="9" width="11" height="11" rx="2" />
+        <path d="M15 6.2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h.2" />
+      </symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.6 4.6 4.6L19 7.4" /></symbol>
+      <symbol id="i-back" viewBox="0 0 24 24"><path d="M14.5 5.5 8 12l6.5 6.5" /></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2.6v2.2M12 19.2v2.2M4.2 12H2M22 12h-2.2M6.5 6.5 4.9 4.9M19.1 19.1l-1.6-1.6M17.5 6.5l1.6-1.6M4.9 19.1l1.6-1.6" />
+      </symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.4A8.5 8.5 0 0 1 9.6 4 8.5 8.5 0 1 0 20 14.4Z" /></symbol>
+      <symbol id="i-key" viewBox="0 0 24 24">
+        <circle cx="8" cy="12" r="3.6" />
+        <path d="M11.6 12H21m-3 0v3.2M15.4 12v2.4" />
+      </symbol>
+    </svg>
+
     <div id="app">
-      <!-- Locked / Setup Screen -->
-      <section id="lock-screen" class="view">
-        <header class="header">
-          <div class="title-block">
-            <span class="logo-circle">AKV</span>
-            <div>
-              <h1>APIKeyVault</h1>
-              <p class="subtitle">Secure API key storage, offline.</p>
-            </div>
-          </div>
-        </header>
-
-        <main class="content">
-          <div id="setup-info" class="info-banner hidden">
-            <strong>First-time setup</strong>
-            <p>
-              Create a master password. It will be used to derive your
-              encryption key and is never stored.
-            </p>
+      <!-- ───────────────────────── Lock / first-run ───────────────────────── -->
+      <section id="view-lock" class="view is-active">
+        <div class="lock">
+          <div class="lock-brand">
+            <span class="brand-mark"><svg><use href="#i-shield" /></svg></span>
+            <h1>APIKeyVault</h1>
+            <p class="brand-tag" id="lock-tagline">Encrypted. Offline. Yours.</p>
           </div>
 
-          <form id="unlock-form" autocomplete="off">
-            <label class="field">
-              <span id="master-label">Master password</span>
-              <div class="password-input">
+          <form id="unlock-form" autocomplete="off" novalidate>
+            <div class="field">
+              <label for="master-password-input" id="master-label">Master password</label>
+              <div class="input-wrap">
                 <input
                   id="master-password-input"
                   type="password"
                   name="masterPassword"
+                  autocomplete="current-password"
+                  spellcheck="false"
+                  placeholder="••••••••"
                   required
                   minlength="8"
                 />
+                <button type="button" id="master-reveal" class="in-input" aria-label="Show password">
+                  <svg><use href="#i-eye" /></svg>
+                </button>
               </div>
-            </label>
 
-            <p id="unlock-hint" class="hint">
-              Your master password is never stored. If you forget it, you lose
-              access to your vault.
+              <div id="strength" class="strength hidden">
+                <div class="strength-track"><div class="strength-fill"></div></div>
+                <span class="strength-label"></span>
+              </div>
+            </div>
+
+            <p id="unlock-error" class="alert error hidden" role="alert"></p>
+
+            <button id="unlock-button" type="submit" class="btn primary block">Unlock vault</button>
+
+            <p class="note" id="unlock-hint">
+              <svg class="note-icon"><use href="#i-lock" /></svg>
+              <span>Your password is never stored. Forget it and the vault is unrecoverable.</span>
             </p>
-
-            <button id="unlock-button" type="submit" class="btn primary">
-              Unlock vault
-            </button>
-
-            <p id="unlock-error" class="error-text hidden"></p>
           </form>
-        </main>
+        </div>
       </section>
 
-      <!-- Vault Screen -->
-      <section id="vault-screen" class="view hidden">
-        <header class="header header-row">
-          <div class="title-block small">
-            <span class="logo-circle small">AKV</span>
-            <div>
-              <h2>API Keys</h2>
-              <p class="subtitle" id="vault-status-text">Unlocked</p>
-            </div>
+      <!-- ───────────────────────────── Key list ───────────────────────────── -->
+      <section id="view-list" class="view">
+        <header class="topbar">
+          <span class="brand-mark sm"><svg><use href="#i-shield" /></svg></span>
+          <div class="topbar-title">
+            <strong>APIKeyVault</strong>
+            <span id="vault-status-text">Unlocked</span>
           </div>
-
-          <div class="header-actions">
-            <button id="bulk-test-button" class="btn secondary small" title="Test all API keys">
-              Test All
+          <div class="topbar-actions">
+            <button id="theme-button" class="icon-btn" aria-label="Switch theme" title="Switch theme">
+              <svg><use href="#i-moon" /></svg>
             </button>
-            <button id="lock-button" class="icon-btn" title="Lock vault">
-              🔒
+            <button id="bulk-test-button" class="icon-btn" aria-label="Test every key" title="Test every key">
+              <svg><use href="#i-bolt" /></svg>
+            </button>
+            <button id="lock-button" class="icon-btn" aria-label="Lock vault" title="Lock vault">
+              <svg><use href="#i-lock" /></svg>
             </button>
           </div>
         </header>
 
-        <main class="content vault-layout">
-          <section class="vault-list">
-            <div class="vault-list-header">
-              <input
-                id="search-input"
-                type="text"
-                placeholder="Search by name"
-                autocomplete="off"
-              />
-              <button id="add-key-button" class="btn small">Add</button>
-            </div>
+        <div class="searchbar">
+          <svg class="search-icon"><use href="#i-search" /></svg>
+          <input id="search-input" type="text" placeholder="Search keys" autocomplete="off" spellcheck="false" />
+          <button id="search-clear" class="in-input hidden" aria-label="Clear search">
+            <svg><use href="#i-close" /></svg>
+          </button>
+        </div>
 
-            <div id="empty-state" class="empty-state hidden">
-              <p>No API keys yet.</p>
-              <p class="hint">
-                Add your first API key using the <strong>Add</strong> button.
-              </p>
-            </div>
+        <div class="list-scroll">
+          <p class="list-meta"><span id="key-count"></span><span id="health-summary"></span></p>
+          <ul id="key-list" class="key-list"></ul>
 
-            <ul id="key-list" class="key-list"></ul>
-          </section>
+          <div id="empty-state" class="empty hidden">
+            <span class="empty-mark"><svg><use href="#i-key" /></svg></span>
+            <h3>No keys yet</h3>
+            <p>Add your first API key — it's encrypted before it ever touches disk.</p>
+          </div>
 
-          <section class="vault-detail">
-            <form id="key-form" autocomplete="off">
-              <input type="hidden" id="key-id" />
+          <div id="no-results" class="empty hidden">
+            <span class="empty-mark"><svg><use href="#i-search" /></svg></span>
+            <h3>No matches</h3>
+            <p>Nothing here matches that search.</p>
+          </div>
+        </div>
 
-              <label class="field">
-                <span>Provider Name</span>
-                <input
-                  id="key-name"
-                  type="text"
-                  name="name"
-                  placeholder="e.g. OpenAI, Gemini, Grok"
-                  required
-                />
-                <p class="hint small">
-                  Use a recognizable name (e.g. "OpenAI", "Gemini", "Grok", "Anthropic", "HuggingFace")
-                </p>
-              </label>
-
-              <label class="field">
-                <span>API Key</span>
-                <div class="password-input">
-                  <input
-                    id="key-value"
-                    type="password"
-                    name="apiKey"
-                    placeholder="sk-..."
-                    autocomplete="new-password"
-                    required
-                  />
-                  <button
-                    id="toggle-visibility-button"
-                    class="btn secondary small"
-                    type="button"
-                    title="Toggle visibility"
-                  >
-                    👁️
-                  </button>
-                </div>
-                <p class="hint small">
-                  API keys are encrypted before storage. Never stored in plaintext.
-                </p>
-              </label>
-
-              <div class="form-row spaced">
-                <button id="save-key-button" type="submit" class="btn primary">
-                  Save
-                </button>
-                <button
-                  id="test-key-button"
-                  type="button"
-                  class="btn secondary"
-                  disabled
-                >
-                  Health Check
-                </button>
-                <button
-                  id="delete-key-button"
-                  type="button"
-                  class="btn danger ghost"
-                  disabled
-                >
-                  Delete
-                </button>
-              </div>
-
-              <div id="health-result" class="health-result hidden">
-                <div class="health-status">
-                  <span class="health-indicator"></span>
-                  <span class="health-message"></span>
-                </div>
-                <p class="health-details"></p>
-              </div>
-
-              <p id="key-error" class="error-text hidden"></p>
-              <p id="key-success" class="success-text hidden"></p>
-            </form>
-          </section>
-        </main>
+        <div class="dock">
+          <button id="add-key-button" class="btn primary block">
+            <svg><use href="#i-plus" /></svg><span>Add API key</span>
+          </button>
+        </div>
       </section>
 
-      <div id="toast" class="toast hidden"></div>
+      <!-- ─────────────────────────── Key editor ──────────────────────────── -->
+      <section id="view-editor" class="view">
+        <header class="topbar">
+          <button id="back-button" class="icon-btn" aria-label="Back to list">
+            <svg><use href="#i-back" /></svg>
+          </button>
+          <div class="topbar-title">
+            <strong id="editor-title">New API key</strong>
+            <span id="editor-sub">Encrypted with AES-GCM</span>
+          </div>
+          <div class="topbar-actions">
+            <button id="delete-key-button" class="icon-btn danger" aria-label="Delete key" disabled>
+              <svg><use href="#i-trash" /></svg>
+            </button>
+          </div>
+        </header>
+
+        <form id="key-form" class="editor" autocomplete="off" novalidate>
+          <input type="hidden" id="key-id" />
+
+          <div class="provider-card">
+            <span class="avatar lg" id="provider-avatar" data-provider="unknown">?</span>
+            <div class="provider-meta">
+              <strong id="provider-title">Unrecognized provider</strong>
+              <span id="provider-note">Health checks need a known provider name.</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="key-name">Provider</label>
+            <input
+              id="key-name"
+              type="text"
+              name="name"
+              list="provider-suggestions"
+              placeholder="OpenAI"
+              spellcheck="false"
+              required
+            />
+            <datalist id="provider-suggestions">
+              <option value="OpenAI"></option>
+              <option value="Gemini"></option>
+              <option value="Grok"></option>
+              <option value="Anthropic"></option>
+              <option value="HuggingFace"></option>
+            </datalist>
+          </div>
+
+          <div class="field">
+            <label for="key-value">API key</label>
+            <div class="input-wrap">
+              <input
+                id="key-value"
+                type="password"
+                name="apiKey"
+                placeholder="sk-…"
+                autocomplete="new-password"
+                spellcheck="false"
+                required
+              />
+              <button type="button" id="toggle-visibility-button" class="in-input" aria-label="Reveal key" title="Reveal key">
+                <svg><use href="#i-eye" /></svg>
+              </button>
+              <button type="button" id="copy-key-button" class="in-input" aria-label="Copy key" title="Copy key">
+                <svg><use href="#i-copy" /></svg>
+              </button>
+            </div>
+            <p class="hint">Stored encrypted. Never written in plaintext.</p>
+          </div>
+
+          <div id="health-result" class="health hidden">
+            <span class="health-dot"></span>
+            <div>
+              <strong class="health-message"></strong>
+              <span class="health-details"></span>
+            </div>
+          </div>
+
+          <p id="key-error" class="alert error hidden" role="alert"></p>
+        </form>
+
+        <div class="dock split">
+          <button id="test-key-button" type="button" class="btn ghost" disabled>
+            <svg><use href="#i-bolt" /></svg><span>Health check</span>
+          </button>
+          <button id="save-key-button" type="submit" form="key-form" class="btn primary">Save</button>
+        </div>
+      </section>
+
+      <!-- ────────────────────────── Delete confirm ───────────────────────── -->
+      <div id="confirm-sheet" class="scrim hidden">
+        <div class="sheet" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title">
+          <h3 id="confirm-title">Delete this key?</h3>
+          <p id="confirm-body">This cannot be undone.</p>
+          <div class="sheet-actions">
+            <button id="confirm-cancel" class="btn ghost">Cancel</button>
+            <button id="confirm-delete" class="btn danger">Delete</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
     </div>
 
     <script type="module" src="popup.js"></script>
